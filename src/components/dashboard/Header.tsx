@@ -1,11 +1,11 @@
-import { Moon, Sun, Shield, Eye } from "lucide-react";
+import { Shield, Eye } from "lucide-react";
 import { useStore, type Role } from "@/store/useStore";
-import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { ToggleTheme } from "@/components/ui/toggle-theme";
 
 export default function Header() {
-  const { role, setRole, darkMode, toggleDarkMode } = useStore();
+  const { role, setRole } = useStore();
 
   return (
     <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -29,9 +29,7 @@ export default function Header() {
             </SelectContent>
           </Select>
         </div>
-        <Button variant="outline" size="icon" className="h-8 w-8" onClick={toggleDarkMode}>
-          {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-        </Button>
+        <ToggleTheme />
       </div>
     </header>
   );

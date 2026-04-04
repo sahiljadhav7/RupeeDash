@@ -25,8 +25,6 @@ interface Filters {
 interface Store {
   role: Role;
   setRole: (role: Role) => void;
-  darkMode: boolean;
-  toggleDarkMode: () => void;
   transactions: Transaction[];
   addTransaction: (t: Omit<Transaction, "id">) => void;
   editTransaction: (id: string, t: Partial<Transaction>) => void;
@@ -77,13 +75,6 @@ export const useStore = create<Store>()(
     (set) => ({
       role: "admin",
       setRole: (role) => set({ role }),
-      darkMode: false,
-      toggleDarkMode: () =>
-        set((s) => {
-          const next = !s.darkMode;
-          document.documentElement.classList.toggle("dark", next);
-          return { darkMode: next };
-        }),
       transactions: mockTransactions,
       addTransaction: (t) =>
         set((s) => ({
@@ -108,7 +99,6 @@ export const useStore = create<Store>()(
       name: "finance-dashboard",
       partialize: (state) => ({
         transactions: state.transactions,
-        darkMode: state.darkMode,
         role: state.role,
       }),
     }
