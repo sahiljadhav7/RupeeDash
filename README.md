@@ -1,4 +1,6 @@
-# RupeeDash - Finance Dashboard
+# RupeeDash - Finance Dashboard 
+
+# LIVE LINk - https://rupeedash.vercel.app/
 
 RupeeDash is a personal finance dashboard built with React, TypeScript, and Vite. It lets you track income and expenses, explore deeper financial insights, and manage transactions from a sidebar-driven workspace with Home, Insights, and Transactions pages.
 
