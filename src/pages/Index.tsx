@@ -7,12 +7,16 @@ import InsightsPanel from "@/components/dashboard/InsightsPanel";
 
 export default function Index() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <Header />
+    <div className="min-h-screen">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+        <Header
+          title="Home"
+          eyebrow="Overview"
+          description="Track your balance, spending behavior, and recent transactions from the same dashboard you already had, now anchored inside a navigable workspace."
+        />
         <div className="space-y-6">
           <SummaryCards />
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
             <div className="lg:col-span-3">
               <BalanceTrendChart />
             </div>

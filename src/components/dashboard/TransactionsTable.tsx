@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ArrowUpDown, Plus, Pencil, Trash2, X, Download, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useStore, useFilteredTransactions, type Category, type TransactionType } from "@/store/useStore";
@@ -158,7 +158,10 @@ export default function TransactionsTable() {
               onChange={(e) => setFilter("search", e.target.value)}
             />
           </div>
-          <Select value={filters.type} onValueChange={(v) => setFilter("type", v as any)}>
+          <Select
+            value={filters.type}
+            onValueChange={(value) => setFilter("type", value as TransactionType | "all")}
+          >
             <SelectTrigger className="w-full sm:w-32"><SelectValue placeholder="Type" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
@@ -166,7 +169,10 @@ export default function TransactionsTable() {
               <SelectItem value="expense">Expense</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={filters.category} onValueChange={(v) => setFilter("category", v as any)}>
+          <Select
+            value={filters.category}
+            onValueChange={(value) => setFilter("category", value as Category | "all")}
+          >
             <SelectTrigger className="w-full sm:w-36"><SelectValue placeholder="Category" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>

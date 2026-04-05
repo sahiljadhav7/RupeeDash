@@ -15,6 +15,8 @@ try {
       localStorage.setItem(THEME_STORAGE_KEY, legacyDarkMode ? "dark" : "light");
     }
   }
-} catch {}
+} catch {
+  // Ignore malformed legacy state and continue bootstrapping the app.
+}
 
 createRoot(document.getElementById("root")!).render(<App />);
