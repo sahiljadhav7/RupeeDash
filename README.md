@@ -1,123 +1,163 @@
-# RupeeDash — Finance Dashboard
+# RupeeDash - Finance Dashboard
 
-A personal finance dashboard I built to practice React + TypeScript. You can track income and expenses, visualize spending patterns, and manage transactions with full CRUD. It also has a basic role system (admin vs viewer) and dark mode.
+RupeeDash is a personal finance dashboard built with React, TypeScript, and Vite. It lets you track income and expenses, explore deeper financial insights, and manage transactions from a sidebar-driven workspace with Home, Insights, and Transactions pages.
 
----
+## Features
 
-## What it does
+- Sidebar navigation with dedicated `Home`, `Insights`, and `Transactions` pages
+- Overview dashboard with balance, income, expense, and savings summary cards
+- Monthly balance trend visualization and expense breakdown charts
+- Insight-focused analytics for strongest months, spending concentration, and trend signals
+- Transactions workspace with search, filters, sorting, CSV export, and CRUD actions
+- Admin and viewer role modes with role-aware controls
+- Theme toggle with persisted light/dark preference
+- Local persistence for transactions and active role using Zustand
 
-- Shows a summary of your total balance, income, expenses, and savings rate
-- A chart for monthly income/expense trends
-- Pie chart breaking down expenses by category
-- A transactions table with search, filters, sorting, and CSV export
-- Add/edit/delete transactions (admin only)
-- Two ways to paginate: infinite scroll or classic page buttons — you can switch between them
-- Dark mode that actually remembers your preference across reloads
+## Pages
 
----
+### Home
 
-## Tech stack
+The main dashboard view keeps the original structure and surfaces the high-level financial picture:
 
-- **React 18** + **TypeScript**
-- **Vite** (with SWC) for the build — way faster than CRA
-- **Zustand** for state management. I looked at Redux but it felt like overkill for this, and Context would cause too many re-renders. Zustand's `persist` middleware also handles the localStorage sync automatically which was nice
-- **Recharts** for the charts
-- **shadcn/ui** for UI components — basically Radix UI primitives with Tailwind styling
-- **Tailwind CSS** for styling
-- **Framer Motion** for the entrance animations
-- **React Router v6** for routing (only two routes right now)
-- **TanStack Query** is set up but mostly unused — I added it so it's easier to swap in a real API later
-- **Vitest** + **Testing Library** for unit tests
-- **Playwright** for E2E (scaffold is there, tests still need to be written)
+- Summary cards
+- Balance trend chart
+- Spending breakdown
+- Quick insights panel
+- Transaction table
 
----
+### Insights
 
-## Folder structure
+The insights page expands on the dashboard with more in-depth analysis:
 
-```
+- Spending concentration and monthly change metrics
+- Category deep dive with share-of-spend bars
+- Monthly performance table
+- Largest income and expense highlights
+- Recommendation-style observations derived from transaction history
+
+### Transactions
+
+The transactions page focuses on detailed activity:
+
+- Current dataset summary cards
+- Recent activity feed
+- Expense hotspot breakdown
+- Full transactions table with filters and export
+- Admin-only add, edit, and delete actions
+
+## Tech Stack
+
+- React 18
+- TypeScript
+- Vite
+- React Router v6
+- Zustand with `persist`
+- Tailwind CSS
+- shadcn/ui + Radix UI
+- Recharts
+- Framer Motion
+- TanStack Query
+- Vitest + Testing Library
+- Playwright scaffold
+
+## Project Structure
+
+```text
 src/
-├── main.tsx              # entry point
-├── App.tsx               # sets up routing and providers
-├── index.css             # all the CSS variables for theming + Tailwind imports
-├── pages/
-│   ├── Index.tsx         # the main dashboard page
-│   └── NotFound.tsx      # 404
-├── components/
-│   ├── NavLink.tsx       # thin wrapper around react-router's NavLink
-│   ├── dashboard/        # all the dashboard widgets
-│   │   ├── Header.tsx
-│   │   ├── SummaryCards.tsx
-│   │   ├── BalanceTrendChart.tsx
-│   │   ├── SpendingBreakdown.tsx
-│   │   ├── InsightsPanel.tsx
-│   │   └── TransactionsTable.tsx
-│   └── ui/               # shadcn components (button, dialog, select, etc.)
-├── store/
-│   └── useStore.ts       # Zustand store + selectors
-├── hooks/
-│   ├── use-mobile.tsx    # checks if viewport is mobile
-│   └── use-toast.ts      # toast notification hook
-├── lib/
-│   └── utils.ts          # just the cn() helper (clsx + tailwind-merge)
-└── test/
-    ├── setup.ts
-    └── example.test.ts
+|-- App.tsx
+|-- main.tsx
+|-- index.css
+|-- components/
+|   |-- dashboard/
+|   |   |-- DashboardLayout.tsx
+|   |   |-- DashboardSidebar.tsx
+|   |   |-- Header.tsx
+|   |   |-- SummaryCards.tsx
+|   |   |-- BalanceTrendChart.tsx
+|   |   |-- SpendingBreakdown.tsx
+|   |   |-- InsightsPanel.tsx
+|   |   |-- TransactionsTable.tsx
+|   |   `-- MetricCard.tsx
+|   `-- ui/
+|-- lib/
+|   |-- finance.ts
+|   `-- utils.ts
+|-- pages/
+|   |-- Index.tsx
+|   |-- Insights.tsx
+|   |-- Transactions.tsx
+|   `-- NotFound.tsx
+|-- store/
+|   `-- useStore.ts
+`-- test/
+    |-- example.test.ts
+    `-- finance.test.ts
 ```
 
----
+## State Management
 
-## State management
+The app uses a single Zustand store in `src/store/useStore.ts` for:
 
-Everything lives in one Zustand store (`src/store/useStore.ts`). The store holds:
+- `transactions`
+- `role`
+- `filters`
 
-- `transactions` — the list of all transactions
-- `role` — either `"admin"` or `"viewer"`
-- `darkMode` — boolean
-- `filters` — search string, type, category, sort field and order
+Transactions and role are persisted to local storage. Filter state is intentionally not persisted so each session starts with a clean working view.
 
-I used Zustand's `persist` middleware but only persisted `transactions`, `darkMode`, and `role`. The filters intentionally don't get saved — felt weird to reload the page and still have a search query from last time.
+## Analytics Layer
 
-There's also a `useFilteredTransactions` selector exported from the store that handles all the search/filter/sort logic in one place, so the table component doesn't have to think about it.
+Shared derived finance logic lives in `src/lib/finance.ts`. This keeps calculations consistent across the sidebar, charts, insights page, and transactions page.
 
-```ts
-// This was one of my favourite small wins — a single generic action for all filters
-// instead of writing setSearchFilter, setTypeFilter, setCategoryFilter, etc.
-setFilter: <K extends keyof Filters>(key: K, value: Filters[K]) => void
-```
+It includes helpers for:
 
----
+- summary metrics
+- monthly cash flow
+- expense category breakdown
+- recent transactions
+- insight snapshots
 
-## A few things worth mentioning
+## Getting Started
 
-**Dark mode without flash** — I restore the dark mode class on `<html>` synchronously in `main.tsx` before React even mounts. If I did it in a `useEffect` there'd be a white flash. Easy fix once you know the pattern.
-
-**Dual pagination** — The transactions table has both infinite scroll (using `IntersectionObserver` on a sentinel div at the bottom) and traditional page-number pagination. You can toggle between them live. The infinite scroll triggers 100px before the sentinel enters the viewport so it feels seamless.
-
-**RBAC** — It's purely frontend simulation. Admin users see the Add/Edit/Delete controls, viewers don't. Obviously in a real app this would be enforced server-side too, but for a demo it shows the concept.
-
-**CSV export** — Creates a Blob from the filtered transaction list and fakes a download click. Exports whatever the current filters show, not everything.
-
----
-
-## Getting started
+Install dependencies:
 
 ```bash
 npm install
-npm run dev
-# runs on http://localhost:8080
 ```
+
+Start the dev server:
 
 ```bash
-npm run build    # production build
-npm test         # run unit tests
+npm run dev
 ```
 
----
+Create a production build:
 
-## What I'd add with more time
+```bash
+npm run build
+```
 
-- Connect to an actual backend (TanStack Query is already configured for this)
-- Date range filter (react-day-picker is already installed, just needs wiring up)
-- Budget goals per category
-- Proper auth instead of the fake role switcher
-- More tests — the Vitest setup is there but coverage is minimal
+Run tests:
+
+```bash
+npm run test
+```
+
+Run lint:
+
+```bash
+npm run lint
+```
+
+## Notes
+
+- Theme preference is restored through `next-themes`, with legacy theme migration handled in `src/main.tsx`.
+- Role-based access in this project is frontend-only and meant to simulate admin versus viewer behavior.
+- The current dataset is local and mock-driven, which makes it easy to replace with an API later.
+
+## Future Improvements
+
+- Connect the dashboard to a real backend or API
+- Add date-range filtering and budgeting tools
+- Introduce authentication for real role enforcement
+- Expand automated test coverage
+- Split large bundles with route-level code splitting
